@@ -1,2 +1,8 @@
 *.class
 *.log
+*.cache
+target/*
+*/target/*
+
+.vscode
+.DS_Store
