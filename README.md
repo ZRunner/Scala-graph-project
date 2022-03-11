@@ -10,6 +10,8 @@ Compile the project: `sbt compile`
 
 Run it: `sbt run`
 
+Test it: `sbt test`
+
 Package it: `sbt package`
 
 *(Source: https://alvinalexander.com/scala/sbt-how-to-compile-run-package-scala-project/)*
