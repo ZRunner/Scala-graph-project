@@ -22,19 +22,25 @@ trait StrictGraph[V] {
       * @param v vertex
       * @return [[None]] if `v` is not an actual vertex, the inner degree of `v` otherwise
       */
-    def inDegreeOf(v : V) : Option[Int] = ???
+    def inDegreeOf(v : V) : Option[Int] = {
+      if (!(vertices contains v)) None
+      else Some(vertices count { arcs contains Arc(_, v) } )
+    }
 
     /** The number of outcoming arcs to input vertex
       * @param v vertex
       * @return [[None]] if `v` is not an actual vertex, the outer degree of `v` otherwise
       */
-    def outDegreeOf(v : V) : Option[Int] = ???
+    def outDegreeOf(v : V) : Option[Int] = successorsOf(v) map { _.size }
 
     /** The number of adjacent vertices to input vertex
       * @param v vertex
       * @return [[None]] if `v` is not an actual vertex, the degree of `v` otherwise
       */
-    def degreeOf(v : V) : Option[Int] = ???
+    def degreeOf(v : V) : Option[Int] = {
+      if (!(vertices contains v)) None
+      else (inDegreeOf(v) ++ outDegreeOf(v)).reduceOption(_ + _) // that's how to sum 2 Option[Int]
+    }
 
     /* VERTEX OPERATIONS */
 
