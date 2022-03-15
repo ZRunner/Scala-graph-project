@@ -51,6 +51,17 @@ trait SimpleGraph[V] {
       else visit(vertices.head,Set())
     }
 
+    /* Une autre méthode, un peu plus gourmande - Arthur
+    lazy val isConnected : Boolean = {
+      def visit(node: V, visited: Set[V]): Set[V] = {
+        if (visited == vertices || visited.contains(node)) visited
+        else neighborsOf(node).getOrElse(Set()).map(visit(_, visited+node)).flatten
+      }
+      if (vertices.size == 0) true
+      else visit(vertices.head, Set()) == vertices
+    }
+    */
+
     /** Checks if graph is acyclic */
     lazy val isAcyclic : Boolean = ???
 
