@@ -41,7 +41,15 @@ trait SimpleGraph[V] {
     }
 
     /** Checks if graph is connected */
-    lazy val isConnected : Boolean = ???
+    lazy val isConnected : Boolean = {
+      def visit(start: V, visited: Set[V]) : Boolean = {
+        if (visited == vertices) true
+        else if (visited.contains(start)) false
+        else neighborsOf(start).getOrElse(Set()).map(visit(_, visited+start)).exists(identity)
+      }
+      if(vertices.size == 0) true
+      else visit(vertices.head,Set())
+    }
 
     /** Checks if graph is acyclic */
     lazy val isAcyclic : Boolean = ???
