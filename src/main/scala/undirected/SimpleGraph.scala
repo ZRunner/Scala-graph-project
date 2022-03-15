@@ -31,7 +31,14 @@ trait SimpleGraph[V] {
       * @param v2 other end of path to search
       * @return `true` if `v1` and `v2` are equal or if a path exists between `v1` and `v2`, `false` otherwise
       */
-    def hasPath(v1 : V, v2 : V) : Boolean = ???
+    def hasPath(v1 : V, v2 : V) : Boolean = {
+      def hasPathRecursiv(start: V, end: V, visited: Set[V]): Boolean = {
+        if (visited.contains(start)) false
+        // else (start == end) || neighborsOf(start).map(_.map(x => hasPathRecursiv(x, end, visited+start))).map(_.exists(identity)).getOrElse(false)
+        else (start == end) || neighborsOf(start).getOrElse(Set()).map(x => hasPathRecursiv(x, end, visited+start)).exists(identity)
+      }
+      hasPathRecursiv(v1, v2, Set())
+    }
 
     /** Checks if graph is connected */
     lazy val isConnected : Boolean = ???
