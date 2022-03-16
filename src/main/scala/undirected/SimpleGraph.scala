@@ -63,7 +63,20 @@ trait SimpleGraph[V] {
     */
 
     /** Checks if graph is acyclic */
-    lazy val isAcyclic : Boolean = ???
+    lazy val isAcyclic : Boolean = {
+      def isCyclic(node: V, parent: Option[V], grandparent: Option[V], visited: Set[V]): Boolean = {
+        // vérifie si on est pas juste revenu en arrière
+        if (grandparent.isDefined && grandparent.get == node) false
+        // si c'est effectivement un nœud déjà visité, c'est cyclique
+        else if (visited.contains(node)) true
+        // sinon on vérifie tous les enfants un par un
+        else neighborsOf(node).getOrElse(Set()).map(
+            isCyclic(_, Some(node), parent, if (grandparent.isDefined) visited+grandparent.get else visited)
+          ).exists(identity)
+      }
+      if (vertices.size < 3) true // un graphe à 0, 1 ou 2 nœuds est forcément acyclique
+      else !vertices.map(x => isCyclic(x, None, None, Set())).exists(identity) // un graphe est acyclique si aucune de ses composantes n'est cyclique
+    }
 
     /** Checks if graph is a tree */
     lazy val isTree : Boolean = isConnected && isAcyclic
