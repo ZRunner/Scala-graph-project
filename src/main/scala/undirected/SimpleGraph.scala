@@ -48,7 +48,7 @@ trait SimpleGraph[V] {
         else neighborsOf(start).getOrElse(Set()).map(visit(_, visited+start)).exists(identity)
       }
       if(vertices.size == 0) true
-      else visit(vertices.head,Set())
+      else visit(vertices.head, Set())
     }
 
     /* Une autre méthode, un peu plus gourmande - Arthur
@@ -63,19 +63,41 @@ trait SimpleGraph[V] {
     */
 
     /** Checks if graph is acyclic */
-    lazy val isAcyclic : Boolean = {
-      def isCyclic(node: V, parent: Option[V], grandparent: Option[V], visited: Set[V]): Boolean = {
-        // vérifie si on est pas juste revenu en arrière
-        if (grandparent.isDefined && grandparent.get == node) false
-        // si c'est effectivement un nœud déjà visité, c'est cyclique
-        else if (visited.contains(node)) true
-        // sinon on vérifie tous les enfants un par un
-        else neighborsOf(node).getOrElse(Set()).map(
-            isCyclic(_, Some(node), parent, if (grandparent.isDefined) visited+grandparent.get else visited)
-          ).exists(identity)
+    lazy val isAcyclic: Boolean = {      
+      /* vérifie si un booléen a déjà été retourné (normalement toujours false), sinon fusionne les deux listes de nœuds visités */
+      def _map(x: Either[Set[V], Boolean], y: Either[Set[V], Boolean]): Either[Set[V], Boolean] = {
+        // le pattern matching c'est la vie
+        (x, y) match {
+          case (Right(_), _)     => x
+          case (_, Right(_))     => y
+          case (Left(l1), Left(l2)) => Left(l1 ++ l2)
+        }
       }
-      if (vertices.size < 3) true // un graphe à 0, 1 ou 2 nœuds est forcément acyclique
-      else !vertices.map(x => isCyclic(x, None, None, Set())).exists(identity) // un graphe est acyclique si aucune de ses composantes n'est cyclique
+
+      /* Parcours un sous-graphe à partir d'un nœud donné
+        Retourne false si un cycle est trouvé, sinon la liste des nœuds parcourus
+      */
+      def acyclicDFS(node: V, visited: Set[V], edges: Set[Edge[V]]): Either[Set[V], Boolean] = {
+        // println("-> foo("+node+", "+visited+")")
+        if (visited.contains(node)) Right(false) // on a trouvé une boucle
+        else vertices.filter(v => edges.contains(Edge(node, v))).map(v =>
+            // on visite chaque voisin autre que le parent (on modifie le set *edges* pour éviter de retourner en arrière)
+            acyclicDFS(v, visited+node, edges-Edge(node, v))
+          ).reduceOption(_map).getOrElse(Left(visited)) // réduction spéciale si jamais aucun enfant n'a été trouvé
+      }
+      /* Vérifie que tous les sous-graphes soient bien parcourus
+        Retourne false si un cycle est trouvé, true sinon
+      */
+      def acyclicHead(to_visit: Set[V]): Boolean = {
+        if (to_visit.size < 3) return true // un graphe à 0, 1 ou 2 nœuds est forcément acyclique
+        acyclicDFS(to_visit.head, Set(), edges) match {
+          case Right(_) => false
+          case Left(list) if list == vertices => true // tous les vertices ont été parcourus, end of the story
+          case Left(list) => acyclicHead(to_visit -- list) // il reste des sous-graphes à parcourir
+        }
+      }
+
+      acyclicHead(vertices)
     }
 
     /** Checks if graph is a tree */
