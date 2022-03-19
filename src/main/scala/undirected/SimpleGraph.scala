@@ -1,6 +1,7 @@
 package undirected
 
 import scala.annotation.tailrec
+import scala.collection.immutable.ListMap
 
 /** Trait for an undirected and ''simple'' graph, that is without loop nor parallel edges
   * @tparam V type for vertices
@@ -41,17 +42,17 @@ trait SimpleGraph[V] {
     }
 
     /** Checks if graph is connected */
-    lazy val isConnected : Boolean = {
-      def visit(start: V, visited: Set[V]) : Boolean = {
-        if (visited == vertices) true
-        else if (visited.contains(start)) false
-        else neighborsOf(start).getOrElse(Set()).map(visit(_, visited+start)).exists(identity)
-      }
-      if(vertices.size == 0) true
-      else visit(vertices.head, Set())
-    }
+    // lazy val isConnected : Boolean = {
+    //   def visit(start: V, visited: Set[V]) : Boolean = {
+    //     if (visited == vertices) true
+    //     else if (visited.contains(start)) false
+    //     else neighborsOf(start).getOrElse(Set()).map(visit(_, visited+start)).exists(identity)
+    //   }
+    //   if (vertices.size == 0) true
+    //   else visit(vertices.head, Set())
+    // }
 
-    /* Une autre méthode, un peu plus gourmande - Arthur
+    /* Une autre méthode, un peu plus gourmande - Arthur */
     lazy val isConnected : Boolean = {
       def visit(node: V, visited: Set[V]): Set[V] = {
         if (visited == vertices || visited.contains(node)) visited
@@ -60,7 +61,7 @@ trait SimpleGraph[V] {
       if (vertices.size == 0) true
       else visit(vertices.head, Set()) == vertices
     }
-    */
+    
 
     /** Checks if graph is acyclic */
     lazy val isAcyclic: Boolean = {      
@@ -78,12 +79,12 @@ trait SimpleGraph[V] {
         Retourne false si un cycle est trouvé, sinon la liste des nœuds parcourus
       */
       def acyclicDFS(node: V, visited: Set[V], edges: Set[Edge[V]]): Either[Set[V], Boolean] = {
-        // println("-> foo("+node+", "+visited+")")
+        // println("-> acyclicDFS("+node+", "+visited+", "+edges+")")
         if (visited.contains(node)) Right(false) // on a trouvé une boucle
         else vertices.filter(v => edges.contains(Edge(node, v))).map(v =>
             // on visite chaque voisin autre que le parent (on modifie le set *edges* pour éviter de retourner en arrière)
             acyclicDFS(v, visited+node, edges-Edge(node, v))
-          ).reduceOption(_map).getOrElse(Left(visited)) // réduction spéciale si jamais aucun enfant n'a été trouvé
+          ).reduceOption(_map).getOrElse(Left(visited+node)) // réduction spéciale si jamais aucun enfant n'a été trouvé
       }
       /* Vérifie que tous les sous-graphes soient bien parcourus
         Retourne false si un cycle est trouvé, true sinon
@@ -157,12 +158,30 @@ trait SimpleGraph[V] {
       * @param valuation valuation used
       * @return a spanning tree whose value is minimal
       */
-    def minimumSpanningTree(valuation : Map[Edge[V], Double]) : SimpleGraph[V] = ???
+    def minimumSpanningTree(valuation : Map[Edge[V], Double]) : SimpleGraph[V] = {
+      def rec(T: SimpleGraph[V], to_check: Map[Edge[V], Double]) : SimpleGraph[V] = {
+        if (T.edges.size == this.vertices.size - 1) T // terminé !
+        else if (to_check.size == 0) this.withoutEdge // impossible de lier tous les poits
+        else if ((T +| to_check.head._1).isAcyclic) rec(T +| to_check.head._1, to_check - to_check.head._1) // edge valide, on l'ajoute à l'arbre et on continue
+        else rec(T, to_check - to_check.head._1) // edge invalide, on essaie le suivant
+      }
+
+      if (!isConnected) this.withoutEdge // un graphe non connexe ne peut donner un arbre
+      else if (isAcyclic) this // un graphe connexe et acyclique est déjà un arbre
+      else rec(this.withoutEdge, ListMap(valuation.toSeq.sortBy(_._2):_*))
+    }
 
     /* COLORING METHODS */
 
     /** Sequence of vertices sorted by decreasing degree */
-    lazy val sortedVertices : Seq[V] = ???
+    lazy val sortedVertices : Seq[V] = {
+      def visit(result: Map[V, Int], to_visit: Set[Edge[V]]) : Map[V, Int] = {
+        if (to_visit.isEmpty) result
+        else visit(result + (to_visit.head._1 -> (result.get(to_visit.head._1).getOrElse(0) + 1)) + (to_visit.head._2 -> (result.get(to_visit.head._2).getOrElse(0) + 1)), to_visit - to_visit.head)
+      }
+
+      ListMap(visit(vertices.map(v => (v, 0)).toMap, edges).toSeq.sortWith(_._2 > _._2):_*).keySet.toSeq
+    }
 
     /** Proper coloring using greedy algorithm (a.k.a WELSH-POWELL) */
     lazy val greedyColoring : Map[V, Int] = ???

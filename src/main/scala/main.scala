@@ -12,9 +12,9 @@ object Main extends App {
     println("Hello, world")
 
     var emptyGraph = new SimpleGraphDefaultImpl[Int](Set(), Set())
-    var cyclicConnectedGraph = new SimpleGraphDefaultImpl[Int](Set(1, 2, 3, 4, 5, 6), Set(Edge(1, 2), Edge(3, 2), Edge(1, 4), Edge(1,5), Edge(3, 6), Edge(3, 5)))
+    var cyclicConnectedGraph = new SimpleGraphDefaultImpl[Int](Set(1, 2, 3, 4, 5, 6), Set(Edge(1, 2), Edge(3, 2), Edge(1, 4), Edge(1, 5), Edge(3, 6), Edge(3, 5)))
     var acyclicConnectedGraph = new SimpleGraphDefaultImpl[Int](Set(1, 2, 3), Set(Edge(1, 2), Edge(2, 3)))
-    var cyclicNotconnectedGraph = new SimpleGraphDefaultImpl[Int](Set(1, 2, 3, 4, 5, 6), Set(Edge(1, 2), Edge(3, 2), Edge(1, 4), Edge(1,5), Edge(5, 2)))
+    var cyclicNotconnectedGraph = new SimpleGraphDefaultImpl[Int](Set(1, 2, 3, 4, 5, 6), Set(Edge(1, 2), Edge(3, 2), Edge(1, 4), Edge(1, 5), Edge(5, 2)))
     var acyclicNotconnectedGraph = new SimpleGraphDefaultImpl[Int](Set(1, 2, 3, 4), Set(Edge(1, 2), Edge(2, 3)))
 
     // graph = graph + 5 + 6
@@ -30,10 +30,25 @@ object Main extends App {
     // println(time { cyclicConnectedGraph.isConnected } )
     // println(time { emptyGraph.isConnected } )
 
-    println("graphe vide (attendu true): "+emptyGraph.isAcyclic)
-    println("graphe cyclique connexe (attendu false): "+time{cyclicConnectedGraph.isAcyclic})
-    println("graphe acyclique connexe (attendu true): "+time{acyclicConnectedGraph.isAcyclic})
-    println("graphe cyclique non connexe (attendu false): "+time{cyclicNotconnectedGraph.isAcyclic})
-    println("graphe acyclique non connexe (attendu true): "+acyclicNotconnectedGraph.isAcyclic)
+    // println("graphe vide (attendu true): "+emptyGraph.isAcyclic)
+    // println("graphe cyclique connexe (attendu false): "+time{cyclicConnectedGraph.isAcyclic})
+    // println("graphe acyclique connexe (attendu true): "+time{acyclicConnectedGraph.isAcyclic})
+    // println("graphe cyclique non connexe (attendu false): "+time{cyclicNotconnectedGraph.isAcyclic})
+    // println("graphe acyclique non connexe (attendu true): "+acyclicNotconnectedGraph.isAcyclic)
+
+    // val a = cyclicConnectedGraph.withoutEdge +| Edge(1, 2)
+    // println(a.isAcyclic)
+
+    // println(cyclicConnectedGraph.minimumSpanningTree(Map(
+    //     Edge(1, 5) -> 7,
+    //     Edge(3, 6) -> 5,
+    //     Edge(1, 2) -> 1,
+    //     Edge(1, 4) -> 3,
+    //     Edge(3, 2) -> 2,
+    //     Edge(3, 5) -> 7
+    // )))
+
+    println(cyclicConnectedGraph.sortedVertices)
+    println(acyclicNotconnectedGraph.sortedVertices)
 }
 
