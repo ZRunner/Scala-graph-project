@@ -1,4 +1,5 @@
 import undirected.{Edge, SimpleGraphDefaultImpl}
+import directed.{Arc, StrictGraphDefaultImpl}
 
 object Main extends App {
     def time[R](block: => R): R = {
@@ -48,7 +49,12 @@ object Main extends App {
     //     Edge(3, 5) -> 7
     // )))
 
-    println(cyclicConnectedGraph.sortedVertices)
-    println(acyclicNotconnectedGraph.sortedVertices)
+    // println(cyclicConnectedGraph.sortedVertices)
+    // println(acyclicNotconnectedGraph.sortedVertices)
+
+    val graph2 = StrictGraphDefaultImpl(Set(1, 2, 3, 4, 5, 6, 7, 8, 9), Set(Arc(1, 2), Arc(1, 8), Arc(2, 8), Arc(2, 3), Arc(3, 6), Arc(4, 3), Arc(4, 5), Arc(5, 6), Arc(9, 8)))
+
+    println(graph2.topologicalOrder)
+
 }
 

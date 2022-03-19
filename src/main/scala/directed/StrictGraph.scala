@@ -87,7 +87,23 @@ trait StrictGraph[V] {
     /* SEARCH METHODS */
 
     /** A topological order of the vertex set (if exists) */
-    lazy val topologicalOrder : Option[Seq[V]] = ???
+    lazy val topologicalOrder : Option[Seq[V]] = {
+      def req(g: StrictGraph[V], ordered: Option[Seq[V]]) : Option[Seq[V]] = {
+         // si cycle trouvé, abort
+        if (!ordered.isDefined) ordered
+        // si un seul nœud restant, easy
+        else if (g.vertices.size == 1) Some(ordered.getOrElse(Seq()) :+ g.vertices.head)
+        // on essaie de trouver un racine du graphe restant
+        else g.vertices.find(g.inDegreeOf(_) == Some(0)) match {
+          // si trouvé, on l'ajoute à la liste
+          case Some(v) => req(g-v, Some(ordered.getOrElse(Seq()) :+ v))
+          // sinon c'est une boucle
+          case None => None
+        }
+      }
+
+      req(this, Some(Seq()))
+    }
 
     /* VALUATED GRAPH METHODS */
 
