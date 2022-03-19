@@ -56,14 +56,18 @@ object Main extends App {
 
     // println(graph2.topologicalOrder)
 
-    val graph3 = SimpleGraphMatrixImpl(Seq('a', 'b', 'c'), IndexedSeq(IndexedSeq(2, 1, 0), IndexedSeq(1, 0, 1), IndexedSeq(0, 1, 0)))
+    val graph3 = SimpleGraphMatrixImpl(Seq('a', 'b', 'c'), IndexedSeq(IndexedSeq(0, 1, 0), IndexedSeq(1, 0, 1), IndexedSeq(0, 1, 0)))
 
     println(graph3.vertices, graph3.edges)
-    println(graph3.neighborsOf('a'))
+    // println(graph3.neighborsOf('a'))
 
-    println(graph3 + 'd')
-    println(graph3 - 'c')
-    println(graph3 - 'b')
+    // println(graph3 + 'd')
+    // println(graph3 - 'c')
+    println(graph3 +| Edge('a', 'a') +| Edge('a', 'c'))
+    println(graph3 -| Edge('a', 'b'))
+
+    // println(graph3.withoutEdge.adjacency)
+    // println(graph3.withAllEdges)
 
 }
 

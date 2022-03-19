@@ -49,15 +49,58 @@ case class SimpleGraphMatrixImpl[V](vs : Seq[V], adjacency : IndexedSeq[IndexedS
     }
 
     /** @inheritdoc */
-    def +| (e : Edge[V]) : SimpleGraphMatrixImpl[V] = ???
+    def +| (e : Edge[V]) : SimpleGraphMatrixImpl[V] = {
+      vs.indexOf(e._1) match {
+        case -1 => this // si le 1er nœud est introuvable, rien à modifier
+        case x => {
+          vs.indexOf(e._2) match {
+            case -1 => this // si le 2nd nœud est introuvable, rien à modifier
+            case y => SimpleGraphMatrixImpl(vs, adjacency.zipWithIndex.map {
+              // pour chaque ligne i, chaque colonne j
+              case (row, i) => { row.zipWithIndex.map {
+                case (value, j) => {
+                  if (i==x && j==y && i==j) 2 // si i=j (boucle sur 1 nœud)
+                  else if ((i==x && j==y) || (i==y && j==x)) 1 // on ajoute l'arrête
+                  else value // on laisse la valeur de base
+                }
+              }}
+            })
+          }
+        }
+      }
+    }
 
     /** @inheritdoc */
-    def -| (e : Edge[V]) : SimpleGraphMatrixImpl[V] = ???
+    def -| (e : Edge[V]) : SimpleGraphMatrixImpl[V] = {
+      vs.indexOf(e._1) match {
+        case -1 => this // si le 1er nœud est introuvable, rien à modifier
+        case x => {
+          vs.indexOf(e._2) match {
+            case -1 => this // si le 2nd nœud est introuvable, rien à modifier
+            case y => SimpleGraphMatrixImpl(vs, adjacency.zipWithIndex.map {
+              // pour chaque ligne i, chaque colonne j
+              case (row, i) => { row.zipWithIndex.map {
+                // on ajoute l'arrête ou on laisse la valeur de base selon les coo
+                case (value, j) => if ((i==x && j==y) || (i==y && j==x)) 0 else value
+              }}
+            })
+          }
+        }
+      }
+    }
 
     /** @inheritdoc */
-    def withoutEdge : SimpleGraphMatrixImpl[V] = ???
+    def withoutEdge : SimpleGraphMatrixImpl[V] = {
+      SimpleGraphMatrixImpl(vs, IndexedSeq.fill(vs.size)(IndexedSeq.fill(vs.size)(0)))
+    }
 
     /** @inheritdoc */
-    def withAllEdges : SimpleGraphMatrixImpl[V] = ???
+    def withAllEdges : SimpleGraphMatrixImpl[V] = {
+      SimpleGraphMatrixImpl(vs,
+        (0 to vs.size-1).map(i => {
+          (0 to vs.size-1).map(j => if (i==j) 0 else 1).toIndexedSeq
+        }).toIndexedSeq
+      )
+    }
   }
 
