@@ -1,4 +1,4 @@
-import undirected.{Edge, SimpleGraphDefaultImpl}
+import undirected.{Edge, SimpleGraphDefaultImpl, SimpleGraphMatrixImpl}
 import directed.{Arc, StrictGraphDefaultImpl}
 
 object Main extends App {
@@ -52,9 +52,18 @@ object Main extends App {
     // println(cyclicConnectedGraph.sortedVertices)
     // println(acyclicNotconnectedGraph.sortedVertices)
 
-    val graph2 = StrictGraphDefaultImpl(Set(1, 2, 3, 4, 5, 6, 7, 8, 9), Set(Arc(1, 2), Arc(1, 8), Arc(2, 8), Arc(2, 3), Arc(3, 6), Arc(4, 3), Arc(4, 5), Arc(5, 6), Arc(9, 8)))
+    // val graph2 = StrictGraphDefaultImpl(Set(1, 2, 3, 4, 5, 6, 7, 8, 9), Set(Arc(1, 2), Arc(1, 8), Arc(2, 8), Arc(2, 3), Arc(3, 6), Arc(4, 3), Arc(4, 5), Arc(5, 6), Arc(9, 8)))
 
-    println(graph2.topologicalOrder)
+    // println(graph2.topologicalOrder)
+
+    val graph3 = SimpleGraphMatrixImpl(Seq('a', 'b', 'c'), IndexedSeq(IndexedSeq(2, 1, 0), IndexedSeq(1, 0, 1), IndexedSeq(0, 1, 0)))
+
+    println(graph3.vertices, graph3.edges)
+    println(graph3.neighborsOf('a'))
+
+    println(graph3 + 'd')
+    println(graph3 - 'c')
+    println(graph3 - 'b')
 
 }
 
