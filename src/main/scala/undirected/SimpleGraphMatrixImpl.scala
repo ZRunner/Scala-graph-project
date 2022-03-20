@@ -50,42 +50,34 @@ case class SimpleGraphMatrixImpl[V](vs : Seq[V], adjacency : IndexedSeq[IndexedS
 
     /** @inheritdoc */
     def +| (e : Edge[V]) : SimpleGraphMatrixImpl[V] = {
-      vs.indexOf(e._1) match {
-        case -1 => this // si le 1er nœud est introuvable, rien à modifier
-        case x => {
-          vs.indexOf(e._2) match {
-            case -1 => this // si le 2nd nœud est introuvable, rien à modifier
-            case y => SimpleGraphMatrixImpl(vs, adjacency.zipWithIndex.map {
-              // pour chaque ligne i, chaque colonne j
-              case (row, i) => { row.zipWithIndex.map {
-                case (value, j) => {
-                  if (i==x && j==y && i==j) 2 // si i=j (boucle sur 1 nœud)
-                  else if ((i==x && j==y) || (i==y && j==x)) 1 // on ajoute l'arrête
-                  else value // on laisse la valeur de base
-                }
-              }}
-            })
-          }
-        }
+      (vs.indexOf(e._1), vs.indexOf(e._2)) match {
+        case (-1, _) => this // si le 1er nœud est introuvable, rien à modifier
+        case (_, -1) => this // si le 2e nœud est introuvable, rien à modifier
+        case (x, y) => SimpleGraphMatrixImpl(vs, adjacency.zipWithIndex.map {
+          // pour chaque ligne i, chaque colonne j
+          case (row, i) => { row.zipWithIndex.map {
+            case (value, j) => {
+              if (i==x && j==y && i==j) 2 // si i=j (boucle sur 1 nœud)
+              else if ((i==x && j==y) || (i==y && j==x)) 1 // on ajoute l'arrête
+              else value // on laisse la valeur de base
+            }
+          }}
+        })
       }
     }
 
     /** @inheritdoc */
     def -| (e : Edge[V]) : SimpleGraphMatrixImpl[V] = {
-      vs.indexOf(e._1) match {
-        case -1 => this // si le 1er nœud est introuvable, rien à modifier
-        case x => {
-          vs.indexOf(e._2) match {
-            case -1 => this // si le 2nd nœud est introuvable, rien à modifier
-            case y => SimpleGraphMatrixImpl(vs, adjacency.zipWithIndex.map {
-              // pour chaque ligne i, chaque colonne j
-              case (row, i) => { row.zipWithIndex.map {
-                // on ajoute l'arrête ou on laisse la valeur de base selon les coo
-                case (value, j) => if ((i==x && j==y) || (i==y && j==x)) 0 else value
-              }}
-            })
-          }
-        }
+      (vs.indexOf(e._1), vs.indexOf(e._2)) match {
+        case (-1, _) => this // si le 1er nœud est introuvable, rien à modifier
+        case (_, -1) => this // si le 2e nœud est introuvable, rien à modifier
+        case (x, y) => SimpleGraphMatrixImpl(vs, adjacency.zipWithIndex.map {
+          // pour chaque ligne i, chaque colonne j
+          case (row, i) => { row.zipWithIndex.map {
+            // on ajoute l'arrête ou on laisse la valeur de base selon les coo
+            case (value, j) => if ((i==x && j==y) || (i==y && j==x)) 0 else value
+          }}
+        })
       }
     }
 
