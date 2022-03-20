@@ -1,6 +1,7 @@
 package directed
 
 import scala.annotation.tailrec
+import scala.collection.immutable.ListMap
 
 /** Trait for a directed ''and strict'' graph, i.e. without loop nor parallel arcs */
 trait StrictGraph[V] {
@@ -113,7 +114,50 @@ trait StrictGraph[V] {
       * @param end   destination of path
       * @return [[None]] if there is no path from `start` to `end`, the shortest path and its valuation otherwise
       */
-    def shortestPath(valuation : Map[Arc[V], Double])(start : V, end : V) : Option[(Seq[V], Double)] = ???
+    def shortestPath(valuation : Map[Arc[V], Double])(start : V, end : V) : Option[(Seq[V], Double)] = {
+      /* trie la liste des nœuds en fonction de leur valeur dans la map (le plus petit en premier) */
+      def sortPriority(priority: Seq[V], values: Map[V, Double]) : Seq[V] = {
+        priority.sortWith((a, b) => {
+          values.getOrElse(a, 0.0) < values.getOrElse(b, 0.0)
+        })
+      }
+      /* récupère la valeur d'un arc selon la map donnée à la fonction shortestPath */
+      def getValue(from: V, to: V) : Double = {
+        valuation.getOrElse(Arc(from, to), Double.PositiveInfinity)
+      }
+
+      /* fonction récursive qui calcule la distance minimale de chaque nœud à partir du nœud start et de la map des valeurs */
+      def rec(priority: Seq[V], values: Map[V, Double]) : Map[V, Double] = {
+        // println("rec("+priority.headOption+", "+values+")")
+        if (priority.size == 0) values
+        else {
+          successorsOf(priority.head).getOrElse(Set()).foldLeft(values){
+            case (acc, v) => acc + (v -> {
+              if (values.getOrElse(v, Double.PositiveInfinity) > (values.getOrElse(priority.head, 0.0) + getValue(priority.head, v))) (values.getOrElse(priority.head, 0.0) + getValue(priority.head, v))
+              else values.getOrElse(v, Double.PositiveInfinity)
+            })
+          } match {
+            case updated_values => rec(sortPriority(priority.tail, updated_values), updated_values)
+          }
+        }
+      }
+
+      /* trouve le meilleur chemin à partie des distances calculées par rec() */
+      def findPath(path: Seq[V], length: Double, values: Map[V, Double]) : Option[(Seq[V], Double)] = {
+        // println("findPath("+path+", "+length+", "+values+")")
+        if (values.getOrElse(end, 0.0).isInfinite) None
+        else if (!path.isEmpty && path.last == end) Some((path, length))
+        else values.minBy(
+            x => if (path.isEmpty || successorsOf(path.last).getOrElse(Set()).contains(x._1)) x._2 else Double.PositiveInfinity
+        ) match {
+          case (v, distance) => findPath(path :+ v, distance, values - v)
+        }
+      }
+
+      vertices.map(v => (v, if (v==start) 0.0 else Double.PositiveInfinity)).toMap match {
+        case initial_values => findPath(Seq(), 0.0, rec(sortPriority(vertices.toSeq, initial_values), initial_values))
+      }
+    }
 
     /* toString-LIKE METHODS */
 

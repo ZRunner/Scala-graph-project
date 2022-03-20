@@ -80,8 +80,8 @@ object Main extends App {
     // println(graph4.withoutEdge)
     // println(graph4.withAllEdges)
 
-    val graph5 = StrictGraphSuccessorsImpl(Map('a' -> Set('c'), 'b' -> Set('c'), 'c' -> Set[Char](), 'd' -> Set('a')))
-    println(graph5)
+    // val graph5 = StrictGraphSuccessorsImpl(Map('a' -> Set('c'), 'b' -> Set('c'), 'c' -> Set[Char](), 'd' -> Set('a')))
+    // println(graph5)
     // println(graph5.successorsOf('a'))
     // println(graph5 - 'b' + 'g')
     // println(graph5 +| Arc('a', 'b'))
@@ -90,7 +90,11 @@ object Main extends App {
     // println(graph5 -| Arc('a', 'z'))
     // println(graph5.withoutArc)
     // println(graph5.withAllArcs)
-    println(graph5.topologicalOrder)
+    // println(graph5.shortestPath(Map(Arc('a', 'c') -> 1, Arc('b', 'c') -> 1, Arc('d', 'a') -> 2))('d', 'c'))
+
+    val graph6 = StrictGraphSuccessorsImpl(Map(1 -> Set(2, 3), 2 -> Set(4), 3 -> Set(4), 4 -> Set(5), 5 -> Set(6)))
+    println(graph6)
+    println(graph6.shortestPath(Map(Arc(1, 2) -> 20, Arc(1, 3) -> 10, Arc(2, 4) -> 1, Arc(3, 4) -> 1, Arc(4, 5) -> 1, Arc(5, 6) -> 1))(1, 6))
 
 }
 
