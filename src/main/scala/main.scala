@@ -1,5 +1,5 @@
 import undirected.{Edge, SimpleGraphDefaultImpl, SimpleGraphMatrixImpl, SimpleGraphNeighborsImpl}
-import directed.{Arc, StrictGraphDefaultImpl}
+import directed.{Arc, StrictGraphDefaultImpl, StrictGraphSuccessorsImpl}
 
 object Main extends App {
     def time[R](block: => R): R = {
@@ -79,6 +79,18 @@ object Main extends App {
     // println(graph4 -| Edge('a', 'z'))
     // println(graph4.withoutEdge)
     // println(graph4.withAllEdges)
+
+    val graph5 = StrictGraphSuccessorsImpl(Map('a' -> Set('c'), 'b' -> Set('c'), 'c' -> Set[Char](), 'd' -> Set('a')))
+    println(graph5)
+    // println(graph5.successorsOf('a'))
+    // println(graph5 - 'b' + 'g')
+    // println(graph5 +| Arc('a', 'b'))
+    // println(graph5 +| Arc('f', 'z'))
+    // println(graph5 -| Arc('a', 'c'))
+    // println(graph5 -| Arc('a', 'z'))
+    // println(graph5.withoutArc)
+    // println(graph5.withAllArcs)
+    println(graph5.topologicalOrder)
 
 }
 
