@@ -96,7 +96,11 @@ object Main extends App {
     // println(graph6)
     // println(graph6.shortestPath(Map(Arc(1, 2) -> 20, Arc(1, 3) -> 10, Arc(2, 4) -> 1, Arc(3, 4) -> 1, Arc(4, 5) -> 1, Arc(5, 6) -> 1))(1, 6))
 
-    println(acyclicNotconnectedGraph.greedyColoring)
+    // println(cyclicConnectedGraph.coloringDSATUR)
+
+    val graph7 = new SimpleGraphDefaultImpl((1 to 6).toSet, Set(Edge(1, 2), Edge(1, 3), Edge(1, 6), Edge(2, 3), Edge(3, 4), Edge(3, 5), Edge(4, 5), Edge(5, 6)))
+    println(graph7.greedyColoring)
+    println(graph7.coloringDSATUR)
 
 }
 

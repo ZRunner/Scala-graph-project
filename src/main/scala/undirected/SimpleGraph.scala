@@ -204,7 +204,34 @@ trait SimpleGraph[V] {
     }
 
     /** Proper coloring using DSATUR algorithm */
-    lazy val coloringDSATUR : Map[V, Int] = ???
+    lazy val coloringDSATUR : Map[V, Int] = {
+      def DSAT(v: V, colors: Map[V, Int]): Int = {
+        neighborsOf(v).getOrElse(Set()).map(n => {colors.getOrElse(n, 0)}) match {
+          case n_colors => {
+            if (n_colors.size == 0 || n_colors.max == 0) degreeOf(v).getOrElse(0)
+            else n_colors.size
+          }
+        }
+      }
+
+      def sortByDSAT(s: Seq[V], colors: Map[V, Int]) : Seq[V] = s.sortBy(DSAT(_, colors))
+
+      def rec(to_visit: Seq[V], colors: Map[V, Int]) : Map[V, Int] = {
+        if (to_visit.isEmpty) colors
+        else (colors + (to_visit.head -> {
+            neighborsOf(to_visit.head).getOrElse(Set()).map(v => {colors.getOrElse(v, 0)}) match {
+              case n_colors => {
+                if (n_colors.size == 0) 1
+                else (1 to n_colors.max).find(c => !n_colors.contains(c)).getOrElse(n_colors.max+1)
+              }
+            }
+          })) match {
+            case new_colors => rec(sortByDSAT(to_visit.tail, new_colors), new_colors)
+          }
+      }
+
+      rec(sortByDSAT(sortedVertices, Map(sortedVertices.head -> 1)), Map(sortedVertices.head -> 1))
+    }
 
     /* toString-LIKE METHODS */
 
