@@ -184,7 +184,24 @@ trait SimpleGraph[V] {
     }
 
     /** Proper coloring using greedy algorithm (a.k.a WELSH-POWELL) */
-    lazy val greedyColoring : Map[V, Int] = ???
+    lazy val greedyColoring : Map[V, Int] = {
+      def rec(to_visit: Seq[V], colors: Map[V, Int]) : Map[V, Int] = {
+        if (to_visit.isEmpty) colors
+        else rec(
+          to_visit.tail,
+          colors + (to_visit.head -> {
+            neighborsOf(to_visit.head).getOrElse(Set()).map(v => {colors.getOrElse(v, 0)}) match {
+              case n_colors => {
+                if (n_colors.size == 0) 1
+                else (1 to n_colors.max).find(c => !n_colors.contains(c)).getOrElse(n_colors.max+1)
+              }
+            }
+          })
+        )
+      }
+
+      rec(sortedVertices, Map())
+    }
 
     /** Proper coloring using DSATUR algorithm */
     lazy val coloringDSATUR : Map[V, Int] = ???

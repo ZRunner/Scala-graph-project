@@ -13,7 +13,7 @@ object Main extends App {
     println("Hello, world")
 
     var emptyGraph = new SimpleGraphDefaultImpl[Int](Set(), Set())
-    var cyclicConnectedGraph = new SimpleGraphDefaultImpl[Int](Set(1, 2, 3, 4, 5, 6), Set(Edge(1, 2), Edge(3, 2), Edge(1, 4), Edge(1, 5), Edge(3, 6), Edge(3, 5)))
+    var cyclicConnectedGraph = new SimpleGraphDefaultImpl[Int](Set(1, 2, 3, 4, 5, 6), Set(Edge(1, 2), Edge(3, 2), Edge(1, 4), Edge(1, 5), Edge(3, 6), Edge(3, 5), Edge(4, 5)))
     var acyclicConnectedGraph = new SimpleGraphDefaultImpl[Int](Set(1, 2, 3), Set(Edge(1, 2), Edge(2, 3)))
     var cyclicNotconnectedGraph = new SimpleGraphDefaultImpl[Int](Set(1, 2, 3, 4, 5, 6), Set(Edge(1, 2), Edge(3, 2), Edge(1, 4), Edge(1, 5), Edge(5, 2)))
     var acyclicNotconnectedGraph = new SimpleGraphDefaultImpl[Int](Set(1, 2, 3, 4), Set(Edge(1, 2), Edge(2, 3)))
@@ -92,9 +92,11 @@ object Main extends App {
     // println(graph5.withAllArcs)
     // println(graph5.shortestPath(Map(Arc('a', 'c') -> 1, Arc('b', 'c') -> 1, Arc('d', 'a') -> 2))('d', 'c'))
 
-    val graph6 = StrictGraphSuccessorsImpl(Map(1 -> Set(2, 3), 2 -> Set(4), 3 -> Set(4), 4 -> Set(5), 5 -> Set(6)))
-    println(graph6)
-    println(graph6.shortestPath(Map(Arc(1, 2) -> 20, Arc(1, 3) -> 10, Arc(2, 4) -> 1, Arc(3, 4) -> 1, Arc(4, 5) -> 1, Arc(5, 6) -> 1))(1, 6))
+    // val graph6 = StrictGraphSuccessorsImpl(Map(1 -> Set(2, 3), 2 -> Set(4), 3 -> Set(4), 4 -> Set(5), 5 -> Set(6)))
+    // println(graph6)
+    // println(graph6.shortestPath(Map(Arc(1, 2) -> 20, Arc(1, 3) -> 10, Arc(2, 4) -> 1, Arc(3, 4) -> 1, Arc(4, 5) -> 1, Arc(5, 6) -> 1))(1, 6))
+
+    println(acyclicNotconnectedGraph.greedyColoring)
 
 }
 
