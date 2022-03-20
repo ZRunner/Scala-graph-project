@@ -185,7 +185,7 @@ trait SimpleGraph[V] {
 
     /** Proper coloring using greedy algorithm (a.k.a WELSH-POWELL) */
     lazy val greedyColoring : Map[V, Int] = {
-      def rec(to_visit: Seq[V], colors: Map[V, Int]) : Map[V, Int] = {
+      @tailrec def rec(to_visit: Seq[V], colors: Map[V, Int]) : Map[V, Int] = {
         if (to_visit.isEmpty) colors
         else rec(
           to_visit.tail,
@@ -216,7 +216,7 @@ trait SimpleGraph[V] {
 
       def sortByDSAT(s: Seq[V], colors: Map[V, Int]) : Seq[V] = s.sortBy(DSAT(_, colors))
 
-      def rec(to_visit: Seq[V], colors: Map[V, Int]) : Map[V, Int] = {
+      @tailrec def rec(to_visit: Seq[V], colors: Map[V, Int]) : Map[V, Int] = {
         if (to_visit.isEmpty) colors
         else (colors + (to_visit.head -> {
             neighborsOf(to_visit.head).getOrElse(Set()).map(v => {colors.getOrElse(v, 0)}) match {
