@@ -1,4 +1,4 @@
-import undirected.{Edge, SimpleGraphDefaultImpl, SimpleGraphMatrixImpl}
+import undirected.{Edge, SimpleGraphDefaultImpl, SimpleGraphMatrixImpl, SimpleGraphNeighborsImpl}
 import directed.{Arc, StrictGraphDefaultImpl}
 
 object Main extends App {
@@ -56,18 +56,29 @@ object Main extends App {
 
     // println(graph2.topologicalOrder)
 
-    val graph3 = SimpleGraphMatrixImpl(Seq('a', 'b', 'c'), IndexedSeq(IndexedSeq(0, 1, 0), IndexedSeq(1, 0, 1), IndexedSeq(0, 1, 0)))
+    // val graph3 = SimpleGraphMatrixImpl(Seq('a', 'b', 'c'), IndexedSeq(IndexedSeq(0, 1, 0), IndexedSeq(1, 0, 1), IndexedSeq(0, 1, 0)))
 
-    println(graph3.vertices, graph3.edges)
+    // println(graph3.vertices, graph3.edges)
     // println(graph3.neighborsOf('a'))
 
     // println(graph3 + 'd')
     // println(graph3 - 'c')
-    println(graph3 +| Edge('a', 'a') +| Edge('a', 'c'))
-    println(graph3 -| Edge('a', 'b'))
+    // println(graph3 +| Edge('a', 'a') +| Edge('a', 'c'))
+    // println(graph3 -| Edge('a', 'b'))
 
     // println(graph3.withoutEdge.adjacency)
     // println(graph3.withAllEdges)
+
+    // val graph4 = SimpleGraphNeighborsImpl(Map('a' -> Set('a', 'c'), 'b' -> Set('c'), 'c' -> Set('a', 'b'), 'd' -> Set[Char]()))
+    // println(graph4)
+    // println(graph4.neighborsOf('a'))
+    // println(graph4 - 'b' + 'g')
+    // println(graph4 +| Edge('a', 'b'))
+    // println(graph4 +| Edge('f', 'z'))
+    // println(graph4 -| Edge('a', 'c'))
+    // println(graph4 -| Edge('a', 'z'))
+    // println(graph4.withoutEdge)
+    // println(graph4.withAllEdges)
 
 }
 
