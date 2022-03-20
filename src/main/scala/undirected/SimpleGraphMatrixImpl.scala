@@ -94,5 +94,5 @@ case class SimpleGraphMatrixImpl[V](vs : Seq[V], adjacency : IndexedSeq[IndexedS
         }).toIndexedSeq
       )
     }
-  }
 
+}
