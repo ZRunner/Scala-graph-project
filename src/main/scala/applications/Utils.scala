@@ -3,8 +3,8 @@ package applications
 import scala.io.Source
 
 object Utils {
-    def readFile() : Set[Antenne] = {
-        Source.fromFile("src/main/resources/antennes.csv").getLines()
+    def readFile(file: String) : Set[Antenne] = {
+        Source.fromFile(file).getLines()
             .map(line => line.split(";").map(_.trim))
             .drop(1) // remove header
             .filter(_.size == 15) // remove incomplete line
