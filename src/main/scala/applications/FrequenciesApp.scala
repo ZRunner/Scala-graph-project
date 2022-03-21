@@ -11,7 +11,7 @@ object Frequencies extends App {
         result
     }
 
-    val antennes = Utils.readFile("src/main/resources/antennes_cergy.csv")
+    val antennes = Utils.readFile("src/main/resources/antennes.csv").filter(_.commune == "95127")
     println(s"${antennes.size} antennes lues")
 
     def get_edges(antennes: Set[Antenne]) : Set[Edge[Antenne]] = {
