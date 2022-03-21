@@ -30,5 +30,5 @@ object Reconnexion extends App {
     println("isAcyclic: "+g.withAllEdges.isAcyclic)
 
     val tree = g.withAllEdges.minimumSpanningTree(valuation)
-    println(tree.value(valuation))
+    println(tree, tree.value(valuation))
 }

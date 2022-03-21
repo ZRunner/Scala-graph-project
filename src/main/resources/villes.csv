@@ -1,0 +1,11 @@
+id,name,COR_NB_DG_LAT,COR_NB_MN_LAT,COR_NB_SC_LAT,COR_CD_NS_LAT,COR_NB_DG_LON,COR_NB_MN_LON,COR_NB_SC_LON,COR_CD_EW_LON
+0,Paris,0,0,0,N,0,0,0,E
+1,Cergy,0,0,0,N,0,0,0,E
+2,Reims,0,0,0,N,0,0,0,E
+3,Lyon,0,0,0,N,0,0,0,E
+4,Dijon,0,0,0,N,0,0,0,E
+5,Orléans,0,0,0,N,0,0,0,E
+6,Marseille,0,0,0,N,0,0,0,E
+7,Nice,0,0,0,N,0,0,0,E
+8,Bordeaux,0,0,0,N,0,0,0,E
+9,Lille,0,0,0,N,0,0,0,E
