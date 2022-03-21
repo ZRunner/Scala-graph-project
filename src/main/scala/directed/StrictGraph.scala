@@ -146,6 +146,7 @@ trait StrictGraph[V] {
       def findPath(path: Seq[V], length: Double, values: Map[V, Double]) : Option[(Seq[V], Double)] = {
         // println("findPath("+path+", "+length+", "+values+")")
         if (values.getOrElse(end, 0.0).isInfinite) None
+        else if (values.isEmpty) None
         else if (!path.isEmpty && path.last == end) Some((path, length))
         else values.minBy(
             x => if (path.isEmpty || successorsOf(path.last).getOrElse(Set()).contains(x._1)) x._2 else Double.PositiveInfinity
