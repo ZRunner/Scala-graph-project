@@ -12,7 +12,7 @@ object Reconnexion extends App {
         result
     }
 
-    val antennes = Utils.readFile("src/main/resources/antennes.csv").filter(_.commune == "87142")
+    val antennes = Utils.getAntennes().filter(_.commune == "87142")
     println(s"${antennes.size} antennes lues")
 
     def get_values(antennes: Set[Antenne]) : Map[Edge[Antenne], Double] = {

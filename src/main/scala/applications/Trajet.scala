@@ -1,6 +1,6 @@
 package applications
 
-final case class Trajet(from: Ville, to: Ville, temps: Int, distance: Int) {
+final case class Trajet(from: String, to: String, temps: Int, distance: Int) {
     /** @inheritdoc */
     override def equals(o : Any) : Boolean = o match {
         case that : Trajet => that.from == from && that.to == to
