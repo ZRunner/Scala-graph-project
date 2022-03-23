@@ -19,10 +19,12 @@ object GPS extends App {
     val distances = trajets.map(t => (Arc(t.from, t.to), t.distance.toDouble)).toMap
     val temps = trajets.map(t => (Arc(t.from, t.to), t.temps.toDouble)).toMap
 
-    println("Villes et trajets : ")
     val g = StrictGraphDefaultImpl(villes, distances.keySet)
-    println(g)
+    println("Villes : ")
+    g.vertices.map(x => println("\t"+x))
+    println("Trajets possibles : ")
+    trajets.map(x => println("\t"+x))
 
-    println("Chemin le plus court : ")
+    println("Chemin le plus court (Paris, Marseille): ")
     println(g.shortestPath(distances)("Paris", "Marseille"))
 }
