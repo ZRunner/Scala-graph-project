@@ -98,9 +98,9 @@ object Main extends App {
 
     // println(cyclicConnectedGraph.coloringDSATUR)
 
-    val graph7 = new SimpleGraphDefaultImpl((1 to 6).toSet, Set(Edge(1, 2), Edge(1, 3), Edge(1, 6), Edge(2, 3), Edge(3, 4), Edge(3, 5), Edge(4, 5), Edge(5, 6)))
-    println(graph7.greedyColoring)
-    println(graph7.coloringDSATUR)
+    // val graph7 = new SimpleGraphDefaultImpl((1 to 6).toSet, Set(Edge(1, 2), Edge(1, 3), Edge(1, 6), Edge(2, 3), Edge(3, 4), Edge(3, 5), Edge(4, 5), Edge(5, 6)))
+    // println(graph7.greedyColoring)
+    // println(graph7.coloringDSATUR)
 
 }
 
