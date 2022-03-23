@@ -12,23 +12,23 @@ object Reconnexion extends App {
         result
     }
 
-    val antennes = Utils.getAntennes().filter(_.commune == "87142")
-    println(s"${antennes.size} antennes lues")
-
     def get_values(antennes: Set[Antenne]) : Map[Edge[Antenne], Double] = {
         antennes.zipWithIndex.map{ case (a, i) => {
             antennes.slice(i+1, antennes.size).map(b => (Edge(a, b) -> (a.coo - b.coo)))
         }}.flatten.toMap
     }
 
-    val g = SimpleGraphDefaultImpl(antennes, Set[Edge[Antenne]]())
-    println("g created")
-    val valuation = get_values(antennes)
-    // println(valuation)
+    val antennes = Utils.getAntennes().filter(_.commune == "77075")
+    println(s"${antennes.size} antennes lues")
 
-    println("isConnected: "+g.withAllEdges.isConnected)
-    println("isAcyclic: "+g.withAllEdges.isAcyclic)
+    val g = SimpleGraphDefaultImpl(antennes, Set[Edge[Antenne]]())
+    println("Graphe créé")
+    val valuation = get_values(antennes)
 
     val tree = g.withAllEdges.minimumSpanningTree(valuation)
-    println(tree, tree.value(valuation))
+    println("Liste des antennes :")
+    tree.vertices.map(x => println("\t"+x))
+    println("Liaison des antennes :")
+    tree.edges.map(x => println("\tAntenne "+x._1.id+" et antenne "+x._2.id+" ("+(x._1.coo-x._2.coo)+"km de distance)"))
+    println("Distance totale : "+tree.value(valuation))
 }
