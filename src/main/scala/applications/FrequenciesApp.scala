@@ -10,10 +10,6 @@ object Frequencies extends App {
         println("Elapsed time: %.3f ms".format((t1 - t0)/1000000))
         result
     }
-
-    val antennes = Utils.getAntennes().filter(_.commune == "95127")
-    println(s"${antennes.size} antennes lues")
-
     def get_edges(antennes: Set[Antenne]) : Set[Edge[Antenne]] = {
         antennes.zipWithIndex.map{ case (a, i) => {
             antennes.slice(i, antennes.size).filter(b => {
@@ -21,9 +17,14 @@ object Frequencies extends App {
             }).map(b => Edge(a, b))
         }}.flatten
     }
-    val g = SimpleGraphDefaultImpl(antennes.slice(0, 6_000), get_edges(antennes.slice(0, 6_000)))
 
-    println(g.coloringDSATUR.map{
-        case (antenne, couleur) => (antenne, 5.0 + couleur/100.0)
-    }.map(_._2))
+    val antennes = Utils.getAntennes().filter(_.commune == "95127")
+    println(s"${antennes.size} antennes lues")
+
+    SimpleGraphDefaultImpl(antennes, get_edges(antennes))
+    .coloringDSATUR.map{
+        case (antenne, couleur) => {
+            println("Antenne : "+antenne.id+", Coordonnées GPS : "+antenne.coo+", Fréquence : "+(5.0 + couleur/100.0))
+        }
+    }
 }
