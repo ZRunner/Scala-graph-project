@@ -127,36 +127,47 @@ trait StrictGraph[V] {
       }
 
       /* fonction récursive qui calcule la distance minimale de chaque nœud à partir du nœud start et de la map des valeurs */
-      def rec(priority: Seq[V], values: Map[V, Double]) : Map[V, Double] = {
+      def rec(priority: Seq[V], values: Map[V, Double], prev: Map[V, V]) : (Map[V, Double], Map[V, V]) = {
         // println("rec("+priority.headOption+", "+values+")")
-        if (priority.size == 0) values
+        if (priority.size == 0) (values, prev)
         else {
-          successorsOf(priority.head).getOrElse(Set()).foldLeft(values){
-            case (acc, v) => acc + (v -> {
-              if (values.getOrElse(v, Double.PositiveInfinity) > (values.getOrElse(priority.head, 0.0) + getValue(priority.head, v))) (values.getOrElse(priority.head, 0.0) + getValue(priority.head, v))
-              else values.getOrElse(v, Double.PositiveInfinity)
-            })
+          successorsOf(priority.head).getOrElse(Set()).foldLeft((values, prev)){
+            case ((accv, accp), v) => (
+              accv + (v -> {
+                if (values.getOrElse(v, Double.PositiveInfinity) > (values.getOrElse(priority.head, 0.0) + getValue(priority.head, v)))
+                  (values.getOrElse(priority.head, 0.0) + getValue(priority.head, v))
+                else
+                  values.getOrElse(v, Double.PositiveInfinity)
+              }),
+              {
+                if (values.getOrElse(v, Double.PositiveInfinity) > (values.getOrElse(priority.head, 0.0) + getValue(priority.head, v)))
+                  accp + (v -> priority.head)
+                else
+                  accp
+              }
+            )
           } match {
-            case updated_values => rec(sortPriority(priority.tail, updated_values), updated_values)
+            case (updated_values, updated_prev) => rec(sortPriority(priority.tail, updated_values), updated_values, updated_prev)
           }
         }
       }
 
-      /* trouve le meilleur chemin à partie des distances calculées par rec() */
-      def findPath(path: Seq[V], length: Double, values: Map[V, Double]) : Option[(Seq[V], Double)] = {
-        // println("findPath("+path+", "+length+", "+values+")")
-        if (values.getOrElse(end, 0.0).isInfinite) None
-        else if (values.isEmpty) None
-        else if (!path.isEmpty && path.last == end) Some((path, length))
-        else values.minBy(
-            x => if (path.isEmpty || successorsOf(path.last).getOrElse(Set()).contains(x._1)) x._2 else Double.PositiveInfinity
-        ) match {
-          case (v, distance) => findPath(path :+ v, distance, values - v)
+      def findPath(path: Seq[V], length: Double, values: Map[V, Double], prev: Map[V, V]) : Option[(Seq[V], Double)] = {
+        // println("findPath("+path+", "+length+", "+values+", "+prev+")")
+        if (!path.isEmpty && path.head == start) Some(path, length)
+        else if (prev.isEmpty || (!path.isEmpty && !prev.contains(path.head))) None
+        else prev.get(path.head) match {
+          case None => None
+          case Some(v) => findPath(v +: path, length+getValue(v, path.head), values, prev)
         }
       }
 
       vertices.map(v => (v, if (v==start) 0.0 else Double.PositiveInfinity)).toMap match {
-        case initial_values => findPath(Seq(), 0.0, rec(sortPriority(vertices.toSeq, initial_values), initial_values))
+        case initial_values => {
+          rec(sortPriority(vertices.toSeq, initial_values), initial_values, Map()) match {
+            case (values, prev) => findPath(Seq(end), 0.0, values, prev)
+          }
+        }
       }
     }
 

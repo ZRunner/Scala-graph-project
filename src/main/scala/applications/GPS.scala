@@ -12,4 +12,15 @@ object GPS extends App {
     }
 
     println("hello from gps")
+
+    val trajets = Utils.getTrajets()
+    val villes = trajets.map(t => Set(t.from, t.to)).flatten.toSet
+    val distances = trajets.map(t => (Arc(t.from, t.to), t.distance.toDouble)).toMap
+    val temps = trajets.map(t => (Arc(t.from, t.to), t.temps.toDouble)).toMap
+    println("villes: "+villes)
+
+    val g = StrictGraphDefaultImpl(villes, distances.keySet)
+    println(g)
+
+    println(g.shortestPath(distances)("Paris", "Marseille"))
 }
