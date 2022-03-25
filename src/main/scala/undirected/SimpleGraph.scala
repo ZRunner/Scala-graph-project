@@ -34,31 +34,19 @@ trait SimpleGraph[V] {
       */
     def hasPath(v1 : V, v2 : V) : Boolean = {
       def hasPathRecursiv(start: V, end: V, visited: Set[V]): Boolean = {
-        if (visited.contains(start)) false
-        // else (start == end) || neighborsOf(start).map(_.map(x => hasPathRecursiv(x, end, visited+start))).map(_.exists(identity)).getOrElse(false)
+        if (visited contains start) false
         else (start == end) || neighborsOf(start).getOrElse(Set()).map(x => hasPathRecursiv(x, end, visited+start)).exists(identity)
       }
       hasPathRecursiv(v1, v2, Set())
     }
 
     /** Checks if graph is connected */
-    // lazy val isConnected : Boolean = {
-    //   def visit(start: V, visited: Set[V]) : Boolean = {
-    //     if (visited == vertices) true
-    //     else if (visited.contains(start)) false
-    //     else neighborsOf(start).getOrElse(Set()).map(visit(_, visited+start)).exists(identity)
-    //   }
-    //   if (vertices.size == 0) true
-    //   else visit(vertices.head, Set())
-    // }
-
-    /* Une autre méthode, un peu plus gourmande - Arthur */
     lazy val isConnected : Boolean = {
       def visit(node: V, visited: Set[V]): Set[V] = {
         if (visited == vertices || visited.contains(node)) visited
         else neighborsOf(node).getOrElse(Set()).map(visit(_, visited+node)).flatten
       }
-      if (vertices.size == 0) true
+      if (vertices.size <= 1) true
       else visit(vertices.head, Set()) == vertices
     }
     
@@ -69,8 +57,8 @@ trait SimpleGraph[V] {
       def _map(x: Either[Set[V], Boolean], y: Either[Set[V], Boolean]): Either[Set[V], Boolean] = {
         // le pattern matching c'est la vie
         (x, y) match {
-          case (Right(_), _)     => x
-          case (_, Right(_))     => y
+          case (Right(_), _)        => x
+          case (_, Right(_))        => y
           case (Left(l1), Left(l2)) => Left(l1 ++ l2)
         }
       }
@@ -89,7 +77,7 @@ trait SimpleGraph[V] {
       /* Vérifie que tous les sous-graphes soient bien parcourus
         Retourne false si un cycle est trouvé, true sinon
       */
-      def acyclicHead(to_visit: Set[V]): Boolean = {
+      @tailrec def acyclicHead(to_visit: Set[V]): Boolean = {
         if (to_visit.size < 3) return true // un graphe à 0, 1 ou 2 nœuds est forcément acyclique
         acyclicDFS(to_visit.head, Set(), edges) match {
           case Right(_) => false
@@ -159,9 +147,9 @@ trait SimpleGraph[V] {
       * @return a spanning tree whose value is minimal
       */
     def minimumSpanningTree(valuation : Map[Edge[V], Double]) : SimpleGraph[V] = {
-      def rec(T: SimpleGraph[V], to_check: Map[Edge[V], Double]) : SimpleGraph[V] = {
+      @tailrec def rec(T: SimpleGraph[V], to_check: Map[Edge[V], Double]) : SimpleGraph[V] = {
         if (T.edges.size == this.vertices.size - 1) T // terminé !
-        else if (to_check.size == 0) this.withoutEdge // impossible de lier tous les poits
+        else if (to_check.size == 0) this.withoutEdge // impossible de lier tous les points
         else if ((T +| to_check.head._1).isAcyclic) rec(T +| to_check.head._1, to_check - to_check.head._1) // edge valide, on l'ajoute à l'arbre et on continue
         else rec(T, to_check - to_check.head._1) // edge invalide, on essaie le suivant
       }
@@ -175,9 +163,12 @@ trait SimpleGraph[V] {
 
     /** Sequence of vertices sorted by decreasing degree */
     lazy val sortedVertices : Seq[V] = {
-      def visit(result: Map[V, Int], to_visit: Set[Edge[V]]) : Map[V, Int] = {
+      @tailrec def visit(result: Map[V, Int], to_visit: Set[Edge[V]]) : Map[V, Int] = {
         if (to_visit.isEmpty) result
-        else visit(result + (to_visit.head._1 -> (result.get(to_visit.head._1).getOrElse(0) + 1)) + (to_visit.head._2 -> (result.get(to_visit.head._2).getOrElse(0) + 1)), to_visit - to_visit.head)
+        else visit(result + 
+            (to_visit.head._1 -> (result.get(to_visit.head._1).getOrElse(0) + 1)) +
+            (to_visit.head._2 -> (result.get(to_visit.head._2).getOrElse(0) + 1)),
+          to_visit - to_visit.head)
       }
 
       ListMap(visit(vertices.map(v => (v, 0)).toMap, edges).toSeq.sortWith(_._2 > _._2):_*).keySet.toSeq

@@ -58,7 +58,7 @@ case class SimpleGraphMatrixImpl[V](vs : Seq[V], adjacency : IndexedSeq[IndexedS
           case (row, i) => { row.zipWithIndex.map {
             case (value, j) => {
               if (i==x && j==y && i==j) 2 // si i=j (boucle sur 1 nœud)
-              else if ((i==x && j==y) || (i==y && j==x)) 1 // on ajoute l'arrête
+              else if ((i==x && j==y) || (i==y && j==x)) 1 // on ajoute l'arête
               else value // on laisse la valeur de base
             }
           }}
@@ -74,7 +74,7 @@ case class SimpleGraphMatrixImpl[V](vs : Seq[V], adjacency : IndexedSeq[IndexedS
         case (x, y) => SimpleGraphMatrixImpl(vs, adjacency.zipWithIndex.map {
           // pour chaque ligne i, chaque colonne j
           case (row, i) => { row.zipWithIndex.map {
-            // on ajoute l'arrête ou on laisse la valeur de base selon les coo
+            // on ajoute l'arête ou on laisse la valeur de base selon les coo
             case (value, j) => if ((i==x && j==y) || (i==y && j==x)) 0 else value
           }}
         })

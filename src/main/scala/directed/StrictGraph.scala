@@ -89,7 +89,7 @@ trait StrictGraph[V] {
 
     /** A topological order of the vertex set (if exists) */
     lazy val topologicalOrder : Option[Seq[V]] = {
-      def req(g: StrictGraph[V], ordered: Option[Seq[V]]) : Option[Seq[V]] = {
+      @tailrec def req(g: StrictGraph[V], ordered: Option[Seq[V]]) : Option[Seq[V]] = {
          // si cycle trouvé, abort
         if (!ordered.isDefined) ordered
         // si un seul nœud restant, easy
@@ -127,7 +127,7 @@ trait StrictGraph[V] {
       }
 
       /* fonction récursive qui calcule la distance minimale de chaque nœud à partir du nœud start et de la map des valeurs */
-      def rec(priority: Seq[V], values: Map[V, Double], prev: Map[V, V]) : (Map[V, Double], Map[V, V]) = {
+      @tailrec def rec(priority: Seq[V], values: Map[V, Double], prev: Map[V, V]) : (Map[V, Double], Map[V, V]) = {
         // println("rec("+priority.headOption+", "+values+")")
         if (priority.size == 0) (values, prev)
         else {
@@ -152,20 +152,20 @@ trait StrictGraph[V] {
         }
       }
 
-      def findPath(path: Seq[V], length: Double, values: Map[V, Double], prev: Map[V, V]) : Option[(Seq[V], Double)] = {
+      @tailrec def findPath(path: Seq[V], length: Double, prev: Map[V, V]) : Option[(Seq[V], Double)] = {
         // println("findPath("+path+", "+length+", "+values+", "+prev+")")
         if (!path.isEmpty && path.head == start) Some(path, length)
         else if (prev.isEmpty || (!path.isEmpty && !prev.contains(path.head))) None
         else prev.get(path.head) match {
           case None => None
-          case Some(v) => findPath(v +: path, length+getValue(v, path.head), values, prev)
+          case Some(v) => findPath(v +: path, length+getValue(v, path.head), prev)
         }
       }
 
       vertices.map(v => (v, if (v==start) 0.0 else Double.PositiveInfinity)).toMap match {
         case initial_values => {
           rec(sortPriority(vertices.toSeq, initial_values), initial_values, Map()) match {
-            case (values, prev) => findPath(Seq(end), 0.0, values, prev)
+            case (_, prev) => findPath(Seq(end), 0.0, prev)
           }
         }
       }
