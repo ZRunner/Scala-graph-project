@@ -27,6 +27,6 @@ final case class GPSCoo(dg_lat: Int, mn_lat: Int, sc_lat: Int, cd_lat: Char, dg_
 
     /** @inheritdoc */
     override lazy val toString : String = {
-        s"GPS(${dg_lat}°${mn_lat}'${sc_lat}\"${cd_lat} ${dg_long}°${mn_long}'${sc_long}\"${cd_long} El:${hauteur})"
+        s"${dg_lat}°${mn_lat}'${sc_lat}\"${cd_lat} ${dg_long}°${mn_long}'${sc_long}\"${cd_long} ${hauteur}m"
     }
 }

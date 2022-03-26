@@ -3,6 +3,14 @@ package applications
 import directed.{Arc, StrictGraphDefaultImpl}
 
 object GPS extends App {
+    def askUsrInput() : (String, String) = {
+        print("Ville de départ : ")
+        val city1 = scala.io.StdIn.readLine()
+        print("Ville d'arrivée : ")
+        val city2 = scala.io.StdIn.readLine()
+        (city1, city2)
+    }
+
     println("Application GPS")
 
     val trajets = Utils.getTrajets()
@@ -17,9 +25,15 @@ object GPS extends App {
     trajets.map(x => println("\t"+x))
     println()
 
-    println("Chemin le plus court (Paris, Marseille): ")
-    println(StrictGraphDefaultImpl(villes, distances.keySet).shortestPath(distances)("Paris", "Marseille"))
+    askUsrInput() match {
+        case (from, to) => {
+            println()
+            println(s"Chemin le plus court (${from}, ${to}): ")
+            println(StrictGraphDefaultImpl(villes, distances.keySet).shortestPath(distances)(from, to))
 
-    println("Chemin le plus rapide (Paris, Marseille): ")
-    println(StrictGraphDefaultImpl(villes, temps.keySet).shortestPath(temps)("Paris", "Marseille"))
+            println(s"Chemin le plus rapide (${from}, ${to}): ")
+            println(StrictGraphDefaultImpl(villes, temps.keySet).shortestPath(temps)(from, to))
+        }
+    }
+    
 }

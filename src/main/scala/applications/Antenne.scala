@@ -11,4 +11,9 @@ final case class Antenne(id: String, coo: GPSCoo, commune: String) {
     /* [hashCode] is redefined so Edge(a, b).hashCode == Edge(b, a).hashCode */
     /** @inheritdoc */
     override def hashCode : Int = id.hashCode
+
+    /** @inheritdoc */
+    override lazy val toString : String = {
+        s"Antenne(${id}, GPS(${coo}), ${commune})"
+    }
 }
