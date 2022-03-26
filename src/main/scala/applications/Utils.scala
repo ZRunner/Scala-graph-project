@@ -3,6 +3,7 @@ package applications
 import scala.io.Source
 
 object Utils {
+    /** Récupère la liste d'antennes du fichier antennes.csv */
     def getAntennes() : Set[Antenne] = {
         Source.fromFile("src/main/resources/antennes.csv").getLines()
             .map(line => line.split(";").map(_.trim))
@@ -14,10 +15,25 @@ object Utils {
                 )).toSet
     }
 
+    /** Filtre une liste d'antennes pour supprimer celles ayant les mêmes coordonnées */
+    def filterUniqueCoo(list: Set[Antenne]) : Set[Antenne] = {
+        list.groupBy(_.coo).map(_._2.head).toSet
+    }
+
+    /** Récupère la liste de trajets du fichier trajets.csv */
     def getTrajets() : Set[Trajet] = {
         Source.fromFile("src/main/resources/trajets.csv").getLines()
             .map(line => line.split(",").map(_.trim))
             .drop(1) // remove header
             .map(col => Trajet(col(0), col(1), col(2).toInt, col(3).toInt)).toSet
+    }
+
+    /** Mesure et affiche le temps passé à exécuter un bloc de code */
+    def time[R](block: => R): R = {
+        val t0 = System.nanoTime().toDouble
+        val result = block    // call-by-name
+        val t1 = System.nanoTime().toDouble
+        println("Elapsed time: %.3f ms".format((t1 - t0)/1000000))
+        result
     }
 }
